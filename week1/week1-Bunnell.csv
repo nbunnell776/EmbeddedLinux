@@ -1,0 +1,3 @@
+-s,-n,-r,-v,-m,-p,-i,-o
+--kernel-name,--nodename,--kernel-release,--kernel-version,--machine,--processor,--hardware-platform,--operating-system
+Linux, briarBox, 4.15.0-147-generic, #151-Ubuntu SMP Fri Jun18 19:21:01 UTC2021, i686, i686, i686, GNU/Linux
