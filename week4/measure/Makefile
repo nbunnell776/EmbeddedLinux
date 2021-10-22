@@ -11,11 +11,11 @@ CFLAGS += -Wall -g -Og
 INC := ../includes
 
 ifdef TARGET
-all: thermostat_t
+all: clean thermostat_t
 thermostat.o: thermostat.c $(INC)/driver.h		# compile for the ARM
 	$(CC) $(CFLAGS) -c -I$(INC) thermostat.c
 else
-all: thermostat_s
+all: clean thermostat_s
 thermostat.o: thermostat.c $(INC)/driver.h	# compile for x86
 	gcc $(CFLAGS) -c -I$(INC) thermostat.c
 endif

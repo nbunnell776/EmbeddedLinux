@@ -17,7 +17,7 @@
 
 #include "thermostat.h"
 
-const char *delims = " \t,=";
+const char *delims = " \t,=\n";
 
 #define BUFLEN 80
 
@@ -42,13 +42,13 @@ void *monitor (void *arg)
             switch (*cmd)
             {
                 case 's':
-                    setpoint = value;
+                	setpoint = value;
                     break;
                 case 'l':
-                    limit = value;
+                	limit = value;
                     break;
                 case 'd':
-                    deadband = value;
+                	deadband = value;
                     break;
                 default:
                     break;

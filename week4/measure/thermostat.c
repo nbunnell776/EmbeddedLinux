@@ -1,12 +1,16 @@
 /*
 
-        File: measure.c
+        File: thermostat.c
 
     A simple data acquisition program that reads ADC channel 0
     and sends it to stdout. Default loop time is 2 seconds.
 
-
     -------------------------------------------------------
+
+    Author: Nathan Bunnell
+    Date: 10/21/2021
+    Course: ECE-40105, Embedded Linux
+    Assignment: Week 4 -- Thermostat
 
     NOTES ON MODIFIED PROGRAM thermostat.c
 

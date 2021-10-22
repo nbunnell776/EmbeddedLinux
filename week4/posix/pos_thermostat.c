@@ -1,14 +1,18 @@
 /*
 
-        File: measure.c
+        File: pos_thermostat.c
 
     A simple data acquisition program that reads ADC channel 0
     and sends it to stdout. Default loop time is 2 seconds.
 
-
     -------------------------------------------------------
 
-    NOTES ON MODIFIED PROGRAM thermostat.c
+    Author: Nathan Bunnell
+    Date: 10/21/2021
+    Course: ECE-40105, Embedded Linux
+    Assignment: Week 4 -- Thermostat
+
+    NOTES ON MODIFIED PROGRAM pos_thermostat.c
 
     - will implement a simple state machine using measure.c
     	as a reference with the addition of feedback in the
@@ -45,13 +49,13 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#include <pthreads.h>
-include "thermostat.h"
+#include <pthread.h>
+#include "thermostat.h"
 
 #include "libmc-gpio.h"
 #include "libmc-pcf8591.h"
 
-//#include "driver.h"
+#include "driver.h"
 
 // Macro defs for states, LEDs, analog limit values, and the loop delay
 #define NORMAL_STATE 0
@@ -93,16 +97,18 @@ int main (int argc, char *argv[])
 	// Local variable declarations
 	int tempRead, fd;
     unsigned int wait;
-	
-	
-	// Create monitor thread and mutex, test results before continuing
-	//  Message and exit on error
-	if (createThread())
+
+    // Create monitor thread and mutex, store result code in
+    //  statusCode variable to test for success
+    int statusCode = createThread();
+
+	//  Test results; message and exit on error
+	if (statusCode != 0)
 	{
-		printf("\n ERROR: return code from pthread_create is %d\n", rc);
+		printf("\n ERROR: return code from pthread_create is %d\n", statusCode);
         exit(1);
 	}
-	
+
     // Declare variable to track state machine, init to
     //  NORMAL_STATE for first pass
     unsigned int currentState = NORMAL_STATE;
@@ -258,7 +264,7 @@ int main (int argc, char *argv[])
 						assert ((currentState >= NORMAL_STATE) && (currentState <= LIMIT_STATE));
 						break;
 				}
-				
+
 				// Release the mutex after exiting the switch
 				pthread_mutex_unlock (&paramMutex);
 			}
@@ -296,14 +302,14 @@ int main (int argc, char *argv[])
 		sleep (DELAY);
 
     }
-	
-	
 
     printf ("\nGoodbye!\n");
     close_AD (fd);
     close_leds();
-	
+
 	// Kill the main() thread prior to exiting
 	terminateThread();
-    
+
+	return 0;
+
 }
