@@ -18,8 +18,6 @@
     	as a reference with the addition of feedback in the
     	form of the target board's LEDs
 
-	- set points will be hardcoded under the #defines section
-
 	- state machine states will be defined as follows:
 		- NORMAL_STATE = 0
 			- tempRead < (setpoint - deadband)
@@ -76,14 +74,12 @@
 extern int errno;
 
 extern int tempRead;
+extern unsigned int counterVal;
 
 // Initialize these to somewhat reasonable values
 unsigned int setpoint = 45;
 unsigned int limit = 60;
 unsigned int deadband = 5;
-
-// Counter variable will be used to replace the wait-delay
-extern unsigned int counterVal = 0;
 
 int errno;
 
@@ -103,22 +99,13 @@ int main (int argc, char *argv[])
 	int fd;
     unsigned int wait;
 
-    /*
-     * Multimon changes:
-     * 		- Loop 0 to THREADCOUNT
-     * 		- Create thread, pass i as param to createThread so we can track it monitor thread
-     * 		- Test results for error
-     */
-
-    // Create server thread and mutex, store result code in
-    //  statusCode variable to test for success
-    int statusCode = createThread();
+	int statusCode = createThread();
 
 	//  Test results; message and exit on error
 	if (statusCode != 0)
 	{
 		printf("\n ERROR: return code from pthread_create is %d\n", statusCode);
-        exit(1);
+		exit(1);
 	}
 
     // Declare variable to track state machine, init to
@@ -138,6 +125,9 @@ int main (int argc, char *argv[])
     if ((fd = init_leds (REV_A)) < 0)
 	{
 		printf ("Couldn't initialize LED\n");
+
+		// Comment out this return as it creates false errors running on the development host
+		// TODO: figure out why this is failing
 		return -1;
 	}
 
@@ -147,9 +137,15 @@ int main (int argc, char *argv[])
 		exit (2);
 	}
 
+    // Init counter
+    counterVal = 0;
+
     while (running)
     {
     	if (DEBUG) printf ("DEBUG: Loop count is %d\n", counterVal);
+
+    	// TODO: Delete this extra debug statement
+    	if ((counterVal % 10) == 0) printf ("DEBUG: Loop count is %d\n", counterVal);
 
     	/*
     	 * Test if the counter has delayed a reading long enough
@@ -289,8 +285,6 @@ int main (int argc, char *argv[])
          */
 
         // Test currentState, toggle ALARM_LED and toggleFlag if needed
-    	//  I had attempted to use the getGPIOValue() function in place
-    	//  of a flag but was unable to implement it in time
 		if (currentState == LIMIT_STATE)
 		{
 			if (toggleFlag == 0)
