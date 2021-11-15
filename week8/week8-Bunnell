@@ -1,0 +1,7 @@
+#! /bin/sh
+
+modprobe fbtft_device name=sainsmart18 cs=0 speed=16000000 gpios=reset:22,dc:18 rotate=270
+
+sleep 1
+
+/home/src/network/thermostat_t
